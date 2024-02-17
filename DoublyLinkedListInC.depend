@@ -3,16 +3,21 @@
 	<stdio.h>
 	<stdlib.h>
 
-1708199519 source:d:\projects\programming\c\doubly-linked-list-in-c\main.c
+1708204590 source:d:\projects\programming\c\doubly-linked-list-in-c\main.c
 	<stdio.h>
 	<stdlib.h>
 	"interface.h"
 
-1708199505 d:\projects\programming\c\doubly-linked-list-in-c\interface.h
+1708204750 d:\projects\programming\c\doubly-linked-list-in-c\interface.h
 
 1708198294 source:d:\projects\programming\c\doubly-linked-list-in-c\interface.h
 
-1708199447 source:d:\projects\programming\c\doubly-linked-list-in-c\userinput.c
+1708204738 source:d:\projects\programming\c\doubly-linked-list-in-c\userinput.c
+	<stdio.h>
+	<stdlib.h>
+	"interface.h"
+
+1708204358 source:d:\projects\programming\c\doubly-linked-list-in-c\dlinkedlist.c
 	<stdio.h>
 	<stdlib.h>
 	"interface.h"

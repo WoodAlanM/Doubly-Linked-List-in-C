@@ -9,11 +9,12 @@ int getUserChoice(int option, int nodeCount)
     // keep things more vanilla(?)
     int notChosen = 1;
     int userInput;
+    int newValue;
 
     switch (option) {
         // This option is for if the main menu is to be displayed
         case 0:
-            printf("DLL Operations:\n");
+            printf("\nDLL Operations:\n");
             printf("1. Add node\n");
             printf("2. Display node values\n");
             printf("3. Remove node\n");
@@ -53,10 +54,51 @@ int getUserChoice(int option, int nodeCount)
                 }
                 return userInput;
             } else {
-                printf("\nThere are no nodes to remove.  Please try again.");
+                printf("\nThere are no nodes to remove.  Please try again.\n");
                 return -1;
             }
-
+        case 4:
+            if (nodeCount > 0) {
+                printf("\nEnter the index of the node to change: ");
+                while (notChosen) {
+                    scanf("%d" , &userInput);
+                    notChosen = 0;
+                }
+                if (userInput < nodeCount - 1) {
+                    notChosen = 1;
+                    printf("\nEnter the new value for the node: ");
+                    while (notChosen) {
+                        scanf("%d", &newValue);
+                        notChosen = 0;
+                    }
+                    changenodevalue(userInput, newValue);
+                    printf("\nValue changed to (%d).", newValue);
+                    break;
+                } else {
+                    printf("\nChosen index is out of bounds.  Please try again.\n");
+                    break;
+                }
+            } else {
+                printf("\nThere are no nodes to change.  Please try again.\n");
+                break;
+            }
+        case 5:
+            if (nodeCount > 1) {
+                printf("\nSorting the list...\n");
+                sortnodes();
+            } else if (nodeCount == 1) {
+                printf("\nThere is only one list element.  Please try again.\n");
+            } else {
+                printf("\nThere are no list elements.  Please try again.\n");
+            }
+            break;
+        case 6:
+            printf("\nEnter the index of the node to examine: ");
+            while (notChosen) {
+                scanf("%d", &userInput);
+                notChosen = 0;
+            }
+            return userInput;
         default:
             printf("\nWhatcha doin here?");
             break;
