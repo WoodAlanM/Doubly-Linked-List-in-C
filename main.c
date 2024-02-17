@@ -50,7 +50,12 @@ int main()
                 getUserChoice(4, nodeCount);
                 break;
             case 5:
-                getUserChoice(5, nodeCount);
+                if (checknodessorted) {
+                    printf("\nNodes are sorted.\n");
+                } else {
+                    printf("\nNodes are NOT sorted.\n");
+                }
+                //getUserChoice(5, nodeCount);
                 break;
             case 6:
                 printf("\nThe value of the selected node is (%d).\n", examinenode(getUserChoice(6, nodeCount)));

@@ -9,5 +9,6 @@ void removenode(int nodeIndex);
 int examinenode(int nodeIndex);
 void changenodevalue(int nodeIndex, int newValue);
 void sortnodes();
+int checknodessorted();
 
 #endif // INTERFACE_H_INCLUDED

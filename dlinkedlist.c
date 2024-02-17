@@ -178,23 +178,72 @@ void changenodevalue(int nodeIndex, int newValue) {
     }
 }// End changenodevalue
 
+// Need a checker that i can run every time a sort is done
+// I can use this to end the while loop when the list is finally sorted.
+
+// ** THIS DOES NOT WORK **
+int checknodessorted() {
+    if (nodeCount > 1) {
+        node* workingNode = head;
+        node* nextWorkingNode = workingNode->nextNode;
+        node* tempNextNext;
+
+        // This will loop through each node and compare it to the next
+        // if the next value is ever less than the first it will return 0
+        while (workingNode != NULL) {
+            if (workingNode->data < nextWorkingNode->data) {
+                if (nextWorkingNode->nextNode != NULL) {
+                    tempNextNext = nextWorkingNode->nextNode;
+                    workingNode = nextWorkingNode;
+                    nextWorkingNode = tempNextNext;
+                }
+            } else {
+                return 0;
+            }
+        }
+    }
+    return 1;
+}// End checknodessorted
+
 void sortnodes() {
     node* workingNode = head;
     node* nextWorkingNode = workingNode->nextNode;
+    node* tempWorkingNodeNext;
+    node* tempWorkingNodePrevious;
     node* tempNextWorkingNodeNext = nextWorkingNode->nextNode;
+    node* tempNextWorkingNodePrevious;;
 
+// This works to flip the first and second node
+//    if (workingNode->data > nextWorkingNode->data) {
+//        // Swap nodes if the next value is greater than the first
+//        if (workingNode == head) {
+//
+//            head = nextWorkingNode;
+//            workingNode->previousNode = nextWorkingNode;
+//            workingNode->nextNode = tempNextWorkingNodeNext;
+//            nextWorkingNode->nextNode = workingNode;
+//            nextWorkingNode->previousNode = NULL;
+//
+//            free(tempNextWorkingNodeNext);
+//        }
+//    }
 
-    if (workingNode->data > nextWorkingNode->data) {
-        // Swap nodes if the next value is greater than the first
-        if (workingNode == head) {
+    while (workingNode->nextNode != NULL) {
+        if (workingNode->data > nextWorkingNode->data) {
+            // Swap nodes if the next value is greater than the first
+            if (workingNode == head) {
 
-            head = nextWorkingNode;
-            workingNode->previousNode = nextWorkingNode;
-            workingNode->nextNode = tempNextWorkingNodeNext;
-            nextWorkingNode->nextNode = workingNode;
-            nextWorkingNode->previousNode = NULL;
+                head = nextWorkingNode;
+                workingNode->previousNode = nextWorkingNode;
+                workingNode->nextNode = tempNextWorkingNodeNext;
+                nextWorkingNode->nextNode = workingNode;
+                nextWorkingNode->previousNode = NULL;
 
-            free(tempNextWorkingNodeNext);
+                // Will need to move this to later in the code
+                //free(tempNextWorkingNodeNext);
+            } else {
+
+            }
         }
     }
 
