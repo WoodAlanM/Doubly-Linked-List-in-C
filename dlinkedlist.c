@@ -87,13 +87,10 @@ void removenode(int nodeIndex) {
     int notRemoved = 1;
 
     if (nodeCount == 1 && nodeIndex == 0) {
-        // Remove head node
-        node* workingNode = head;
         // Set tail designator to NULL
         head = NULL;
         tail = NULL;
         // Free the head and tail node from memory
-        free(workingNode);
         nodeCount--;
     } else if (nodeCount > 1 && nodeIndex <= nodeCount - 1) {
         // Remove node at chosen location
@@ -115,9 +112,6 @@ void removenode(int nodeIndex) {
                 tempNext->previousNode = tempPrevious;
 
                 notRemoved = 0;
-
-                // Frees workingNode from memory
-                free(workingNode);
 
                 nodeCount--;
             }
@@ -180,22 +174,22 @@ void changenodevalue(int nodeIndex, int newValue) {
 
 // Need a checker that i can run every time a sort is done
 // I can use this to end the while loop when the list is finally sorted.
-
-// ** THIS DOES NOT WORK **
 int checknodessorted() {
     if (nodeCount > 1) {
         node* workingNode = head;
         node* nextWorkingNode = workingNode->nextNode;
-        node* tempNextNext;
+        node* tempNextNext = nextWorkingNode->nextNode;
 
         // This will loop through each node and compare it to the next
         // if the next value is ever less than the first it will return 0
         while (workingNode != NULL) {
             if (workingNode->data < nextWorkingNode->data) {
                 if (nextWorkingNode->nextNode != NULL) {
-                    tempNextNext = nextWorkingNode->nextNode;
-                    workingNode = nextWorkingNode;
+                    workingNode = workingNode->nextNode;
                     nextWorkingNode = tempNextNext;
+                    tempNextNext = nextWorkingNode->nextNode;
+                } else {
+                    return 1;
                 }
             } else {
                 return 0;
@@ -208,43 +202,54 @@ int checknodessorted() {
 void sortnodes() {
     node* workingNode = head;
     node* nextWorkingNode = workingNode->nextNode;
-    node* tempWorkingNodeNext;
-    node* tempWorkingNodePrevious;
-    node* tempNextWorkingNodeNext = nextWorkingNode->nextNode;
-    node* tempNextWorkingNodePrevious;;
+    node* temporaryNodeOne;
+    node* temporaryNodeTwo;
+    int notSorted = 1;
+    int nodeCounter = 0;
 
-// This works to flip the first and second node
-//    if (workingNode->data > nextWorkingNode->data) {
-//        // Swap nodes if the next value is greater than the first
-//        if (workingNode == head) {
-//
-//            head = nextWorkingNode;
-//            workingNode->previousNode = nextWorkingNode;
-//            workingNode->nextNode = tempNextWorkingNodeNext;
-//            nextWorkingNode->nextNode = workingNode;
-//            nextWorkingNode->previousNode = NULL;
-//
-//            free(tempNextWorkingNodeNext);
-//        }
-//    }
 
-    while (workingNode->nextNode != NULL) {
-        if (workingNode->data > nextWorkingNode->data) {
+    // Getting close here
+    while (notSorted) {
+        nodeCounter++;
+        if (workingNode->data > nextWorkingNode->data && nextWorkingNode != NULL) {
             // Swap nodes if the next value is greater than the first
             if (workingNode == head) {
-
+                temporaryNodeOne = nextWorkingNode->nextNode;
                 head = nextWorkingNode;
                 workingNode->previousNode = nextWorkingNode;
-                workingNode->nextNode = tempNextWorkingNodeNext;
-                nextWorkingNode->nextNode = workingNode;
-                nextWorkingNode->previousNode = NULL;
-
-                // Will need to move this to later in the code
-                //free(tempNextWorkingNodeNext);
+                workingNode->nextNode = temporaryNodeOne;
             } else {
+                temporaryNodeOne = nextWorkingNode->nextNode;
+                temporaryNodeTwo = workingNode->previousNode;
 
+                // Swaps the two inner nodes
+                workingNode->nextNode = nextWorkingNode->nextNode;
+                nextWorkingNode->nextNode = workingNode;
+                nextWorkingNode->previousNode = workingNode->previousNode;
+                workingNode->previousNode = nextWorkingNode;
+
+                // Links the out previous node and the outer next node
+                temporaryNodeTwo->nextNode = nextWorkingNode;
+                if (temporaryNodeOne != NULL) {
+                    temporaryNodeOne->previousNode = workingNode;
+                }
+
+                // Increment the working nodes
+                workingNode = workingNode->nextNode;
+                nextWorkingNode = nextWorkingNode->nextNode;
+            }
+        } else {
+            workingNode = workingNode->nextNode;
+            nextWorkingNode = nextWorkingNode->nextNode;
+        }
+        if(nodeCounter == nodeCount - 1) {
+            if (checknodessorted()) {
+                notSorted = 0;
+            } else {
+                nodeCounter = 0;
+                workingNode = head;
+                nextWorkingNode = workingNode->nextNode;
             }
         }
     }
-
 }// End sortnodes
