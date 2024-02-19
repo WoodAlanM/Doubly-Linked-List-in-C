@@ -178,8 +178,10 @@ int checknodessorted() {
     if (nodeCount > 1) {
         node* workingNode = head;
         node* nextWorkingNode = workingNode->nextNode;
-        node* tempNextNext = nextWorkingNode->nextNode;
-
+        node* tempNextNext;
+        if (nextWorkingNode->nextNode != NULL) {
+            tempNextNext = nextWorkingNode->nextNode;
+        }
         // This will loop through each node and compare it to the next
         // if the next value is ever less than the first it will return 0
         while (workingNode != NULL) {
@@ -207,17 +209,39 @@ void sortnodes() {
     int notSorted = 1;
     int nodeCounter = 0;
 
-
     // Getting close here
     while (notSorted) {
         nodeCounter++;
-        if (workingNode->data > nextWorkingNode->data && nextWorkingNode != NULL) {
+        if (workingNode->data > nextWorkingNode->data) {
             // Swap nodes if the next value is greater than the first
             if (workingNode == head) {
-                temporaryNodeOne = nextWorkingNode->nextNode;
-                head = nextWorkingNode;
+                if (nodeCount != 2) {
+                    temporaryNodeOne = nextWorkingNode->nextNode;
+                    head = nextWorkingNode;
+                    free(nextWorkingNode->previousNode);
+                    nextWorkingNode->previousNode = NULL;
+                    workingNode->previousNode = nextWorkingNode;
+                    workingNode->nextNode = temporaryNodeOne;
+                } else {
+                    head = nextWorkingNode;
+                    free(nextWorkingNode->previousNode);
+                    nextWorkingNode->previousNode = NULL;
+                    workingNode->previousNode = nextWorkingNode;
+                    free(workingNode->nextNode);
+                    workingNode->nextNode = NULL;
+                }
+                // Problem here
+                if (temporaryNodeOne != NULL) {
+                    temporaryNodeOne->previousNode = workingNode;
+                }
+            } else if (nextWorkingNode == tail) {
+                temporaryNodeOne = workingNode->previousNode;
+                tail = workingNode;
                 workingNode->previousNode = nextWorkingNode;
-                workingNode->nextNode = temporaryNodeOne;
+                free(workingNode->nextNode);
+                workingNode->nextNode = NULL;
+                nextWorkingNode->previousNode = temporaryNodeOne;
+                temporaryNodeOne->nextNode = nextWorkingNode;
             } else {
                 temporaryNodeOne = nextWorkingNode->nextNode;
                 temporaryNodeTwo = workingNode->previousNode;
@@ -230,9 +254,7 @@ void sortnodes() {
 
                 // Links the out previous node and the outer next node
                 temporaryNodeTwo->nextNode = nextWorkingNode;
-                if (temporaryNodeOne != NULL) {
-                    temporaryNodeOne->previousNode = workingNode;
-                }
+                temporaryNodeOne->previousNode = workingNode;
 
                 // Increment the working nodes
                 workingNode = workingNode->nextNode;
