@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "interface.h"
 
 // This will make it easier later on to traverse the
@@ -176,20 +177,17 @@ void changenodevalue(int nodeIndex, int newValue) {
 // I can use this to end the while loop when the list is finally sorted.
 int checknodessorted() {
     if (nodeCount > 1) {
-        node* workingNode = head;
-        node* nextWorkingNode = workingNode->nextNode;
+        node* checkWorkingNode = head;
+        node* checkNextWorkingNode = checkWorkingNode->nextNode;
         node* tempNextNext;
-        if (nextWorkingNode->nextNode != NULL) {
-            tempNextNext = nextWorkingNode->nextNode;
-        }
         // This will loop through each node and compare it to the next
         // if the next value is ever less than the first it will return 0
-        while (workingNode != NULL) {
-            if (workingNode->data < nextWorkingNode->data) {
-                if (nextWorkingNode->nextNode != NULL) {
-                    workingNode = workingNode->nextNode;
-                    nextWorkingNode = tempNextNext;
-                    tempNextNext = nextWorkingNode->nextNode;
+        while (checkWorkingNode != NULL) {
+            if (checkWorkingNode->data < checkNextWorkingNode->data) {
+                if (checkNextWorkingNode->nextNode != NULL) {
+                    checkWorkingNode = checkWorkingNode->nextNode;
+                    checkNextWorkingNode = tempNextNext;
+                    tempNextNext = checkNextWorkingNode->nextNode;
                 } else {
                     return 1;
                 }
@@ -202,10 +200,14 @@ int checknodessorted() {
 }// End checknodessorted
 
 void sortnodes() {
+    // So APPARENTLY when it comes to swapping the connections
+    // I need to use pointer pointers which i can then use to swap
+    // the links between nodes.  Who knew?
     node* workingNode = head;
     node* nextWorkingNode = workingNode->nextNode;
-    node* temporaryNodeOne;
-    node* temporaryNodeTwo;
+    node** pWorkingNode;
+    node** pNextWorkingNode;
+    node** pTemporaryNode;
     int notSorted = 1;
     int nodeCounter = 0;
 
@@ -216,35 +218,32 @@ void sortnodes() {
             // Swap nodes if the next value is greater than the first
             if (workingNode == head) {
                 if (nodeCount != 2) {
-                    temporaryNodeOne = nextWorkingNode->nextNode;
+                    // Fix
                     head = nextWorkingNode;
-                    free(nextWorkingNode->previousNode);
+                    //free(nextWorkingNode->previousNode);
                     nextWorkingNode->previousNode = NULL;
                     workingNode->previousNode = nextWorkingNode;
-                    workingNode->nextNode = temporaryNodeOne;
                 } else {
+                    pWorkingNode = &workingNode;
+                    pNextWorkingNode = &nextWorkingNode;
+                    pTemporaryNode = &nextWorkingNode;
                     head = nextWorkingNode;
-                    free(nextWorkingNode->previousNode);
                     nextWorkingNode->previousNode = NULL;
-                    workingNode->previousNode = nextWorkingNode;
-                    free(workingNode->nextNode);
+                    nextWorkingNode->nextNode = *pWorkingNode;
+                    workingNode->previousNode = *pTemporaryNode;
                     workingNode->nextNode = NULL;
                 }
-                // Problem here
-                if (temporaryNodeOne != NULL) {
-                    temporaryNodeOne->previousNode = workingNode;
-                }
             } else if (nextWorkingNode == tail) {
-                temporaryNodeOne = workingNode->previousNode;
+                //temporaryNodeOne = workingNode->previousNode;
                 tail = workingNode;
                 workingNode->previousNode = nextWorkingNode;
                 free(workingNode->nextNode);
                 workingNode->nextNode = NULL;
-                nextWorkingNode->previousNode = temporaryNodeOne;
-                temporaryNodeOne->nextNode = nextWorkingNode;
+                //nextWorkingNode->previousNode = temporaryNodeOne;
+                //temporaryNodeOne->nextNode = nextWorkingNode;
             } else {
-                temporaryNodeOne = nextWorkingNode->nextNode;
-                temporaryNodeTwo = workingNode->previousNode;
+                //temporaryNodeOne = nextWorkingNode->nextNode;
+                //temporaryNodeTwo = workingNode->previousNode;
 
                 // Swaps the two inner nodes
                 workingNode->nextNode = nextWorkingNode->nextNode;
@@ -253,8 +252,8 @@ void sortnodes() {
                 workingNode->previousNode = nextWorkingNode;
 
                 // Links the out previous node and the outer next node
-                temporaryNodeTwo->nextNode = nextWorkingNode;
-                temporaryNodeOne->previousNode = workingNode;
+                //temporaryNodeTwo->nextNode = nextWorkingNode;
+                //temporaryNodeOne->previousNode = workingNode;
 
                 // Increment the working nodes
                 workingNode = workingNode->nextNode;
