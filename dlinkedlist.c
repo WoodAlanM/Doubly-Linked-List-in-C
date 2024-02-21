@@ -177,15 +177,15 @@ void changenodevalue(int nodeIndex, int newValue) {
 // I can use this to end the while loop when the list is finally sorted.
 int checknodessorted() {
     if (nodeCount > 1) {
-        node* workingNode = head;
-        node* nextWorkingNode = workingNode->nextNode;
+        node* checkNode = head;
+        node* checkNextNode = checkNode->nextNode;
         // This will loop through each node and compare it to the next
         // if the next value is ever less than the first it will return 0
-        while (workingNode != NULL) {
-            if (workingNode->data < nextWorkingNode->data) {
-                if (nextWorkingNode->nextNode != NULL) {
-                    workingNode = workingNode->nextNode;
-                    nextWorkingNode = nextWorkingNode->nextNode;
+        while (checkNode != NULL) {
+            if (checkNode->data < checkNextNode->data) {
+                if (checkNextNode->nextNode != NULL) {
+                    checkNode = checkNode->nextNode;
+                    checkNextNode = checkNode->nextNode;
                 } else {
                     return 1;
                 }
@@ -203,10 +203,9 @@ void sortnodes() {
     // the links between nodes.  Who knew?
     node* workingNode = head;
     node* nextWorkingNode = workingNode->nextNode;
-    node** pWorkingNode;
-    node** pNextWorkingNode;
-    node** pTemporaryNode;
-    node** pTemporaryNodeTwo;
+    node** tempNodeOne;
+    node** tempNodeTwo;
+
     int notSorted = 1;
     int nodeCounter = 0;
 
@@ -218,38 +217,31 @@ void sortnodes() {
             if (workingNode == head) {
                 // Swaps the first node with the second
                 // and reassigns head and tail
-                pWorkingNode = &workingNode;
-                pNextWorkingNode = &nextWorkingNode;
-                pTemporaryNode = &nextWorkingNode;
                 head = nextWorkingNode;
                 nextWorkingNode->previousNode = NULL;
-                nextWorkingNode->nextNode = *pWorkingNode;
-                workingNode->previousNode = *pTemporaryNode;
+                nextWorkingNode->nextNode = workingNode;
+                workingNode->previousNode = nextWorkingNode;
                 workingNode->nextNode = NULL;
                 if (nodeCount == 2) {
                     tail = workingNode;
                 }
             } else if (nextWorkingNode == tail) {
                 // Swaps the tail with the node before
-                pWorkingNode = &workingNode;
-                pNextWorkingNode = &nextWorkingNode;
-                pTemporaryNode = &workingNode->previousNode;
+                tempNodeOne = &workingNode->previousNode;
+                nextWorkingNode->previousNode = *tempNodeOne;
+                nextWorkingNode->nextNode = workingNode;
+                workingNode->previousNode = nextWorkingNode;
                 tail = workingNode;
-                nextWorkingNode->previousNode = *pTemporaryNode;
-                nextWorkingNode->nextNode = *pWorkingNode;
-                workingNode->previousNode = *pNextWorkingNode;
-                workingNode->nextNode = NULL;
+                tail->nextNode = NULL;
             } else {
                 // Swaps the two inner nodes
                 // and reconnects outer nodes
-                pWorkingNode = &workingNode;
-                pNextWorkingNode = &nextWorkingNode;
-                pTemporaryNode = &workingNode->previousNode;
-                pTemporaryNodeTwo = &nextWorkingNode->nextNode;
-                workingNode->nextNode = *pTemporaryNodeTwo;
-                workingNode->previousNode = *pNextWorkingNode;
-                nextWorkingNode->previousNode = *pTemporaryNode;
-                nextWorkingNode->nextNode = *pWorkingNode;
+                tempNodeOne = &nextWorkingNode->nextNode;
+                tempNodeTwo = &workingNode->previousNode;
+                workingNode->nextNode = *tempNodeOne;
+                workingNode->previousNode = nextWorkingNode;
+                nextWorkingNode->previousNode = *tempNodeTwo;
+                nextWorkingNode->nextNode = workingNode;
 
                 // Iterate to next set of nodes
                 workingNode = workingNode->nextNode;
