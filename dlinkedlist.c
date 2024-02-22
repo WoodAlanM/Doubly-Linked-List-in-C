@@ -35,6 +35,10 @@ void addnode(int d)
     // later down the line. This addNode function
     // will add a node at the end of the DLL
     // will need to consider memory DEallocation
+
+    // **********!!!!!!!!!!!!!!!!!***************
+    // Just took away the asterisk after the last "node"
+    // Not sure if that will change anything
     node* nodeToAdd = (node*)malloc(sizeof(node*));
 
     // So it seems the -> thing is used to assign
@@ -197,68 +201,108 @@ int checknodessorted() {
     return 1;
 }// End checknodessorted
 
-void sortnodes() {
-    // So APPARENTLY when it comes to swapping the connections
-    // I need to use pointer pointers which i can then use to swap
-    // the links between nodes.  Who knew?
+// This lets the user place a new node after any
+// index in the doubly linked list
+int insertnodeatindex(int d, int index) {
+    // Will insert node after given index
+
+    int nodeCounter = 0;
+    int notInserted = 1;
+
+    // Initialize new node
+    node* newNode = (node*)malloc(sizeof(node*));
+    newNode->data = d;
+    newNode->nextNode = NULL;
+    newNode->previousNode = NULL;
+
     node* workingNode = head;
     node* nextWorkingNode = workingNode->nextNode;
-    node** tempNodeOne;
-    node** tempNodeTwo;
 
-    int notSorted = 1;
-    int nodeCounter = 0;
-
-    // Getting close here
-    while (notSorted) {
-        nodeCounter++;
-        if (workingNode->data > nextWorkingNode->data) {
-            // Swap nodes if the next value is greater than the first
-            if (workingNode == head) {
-                // Swaps the first node with the second
-                // and reassigns head and tail
-                head = nextWorkingNode;
-                nextWorkingNode->previousNode = NULL;
-                nextWorkingNode->nextNode = workingNode;
-                workingNode->previousNode = nextWorkingNode;
-                workingNode->nextNode = NULL;
-                if (nodeCount == 2) {
-                    tail = workingNode;
-                }
-            } else if (nextWorkingNode == tail) {
-                // Swaps the tail with the node before
-                tempNodeOne = &workingNode->previousNode;
-                nextWorkingNode->previousNode = *tempNodeOne;
-                nextWorkingNode->nextNode = workingNode;
-                workingNode->previousNode = nextWorkingNode;
-                tail = workingNode;
-                tail->nextNode = NULL;
-            } else {
-                // Swaps the two inner nodes
-                // and reconnects outer nodes
-                tempNodeOne = &nextWorkingNode->nextNode;
-                tempNodeTwo = &workingNode->previousNode;
-                workingNode->nextNode = *tempNodeOne;
-                workingNode->previousNode = nextWorkingNode;
-                nextWorkingNode->previousNode = *tempNodeTwo;
-                nextWorkingNode->nextNode = workingNode;
-
-                // Iterate to next set of nodes
-                workingNode = workingNode->nextNode;
-                nextWorkingNode = nextWorkingNode->nextNode;
-            }
+    while (workingNode != NULL && notInserted) {
+        if (index == 0) {
+            head = newNode;
+            newNode->nextNode = workingNode;
+            workingNode->previousNode = newNode;
+            nodeCount++;
         } else {
-            workingNode = workingNode->nextNode;
-            nextWorkingNode = nextWorkingNode->nextNode;
-        }
-        if(nodeCounter == nodeCount - 1) {
-            if (checknodessorted()) {
-                notSorted = 0;
-            } else {
-                nodeCounter = 0;
-                workingNode = head;
-                nextWorkingNode = workingNode->nextNode;
+            if (index == nodeCounter) {
+                 workingNode->nextNode = newNode;
+                 newNode->previousNode = workingNode;
+                 newNode->nextNode = nextWorkingNode;
+                 nextWorkingNode->previousNode = newNode;
+                 nodeCount++;
+                 return 1;
             }
+        }
+        workingNode = workingNode->nextNode;
+        nextWorkingNode = workingNode->nextNode;
+        nodeCounter++;
+    }
+    // Return a value of zero indicating an error
+    return 0;
+}// End insertnodeatindex
+
+// This should take the head of a new doubly linked list
+// and insert new nodes into it one by one in a sorted manner
+void insertsort(node* nodeToInsert, node** head_ref) {
+    node* workingNode = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = nodeToInsert;
+    } else if ((*head_ref)->data >= nodeToInsert->data) {
+        (*head_ref)->previousNode = nodeToInsert;
+        nodeToInsert->nextNode = *head_ref;
+        *head_ref = nodeToInsert;
+    } else {
+        workingNode = *head_ref;
+        // Walk through the linked list until a value is not less than
+        // the new nodes value and insert the new node after that node.
+        while (workingNode->nextNode != NULL && workingNode->data < nodeToInsert->data) {
+            workingNode = workingNode->nextNode;
+        }
+        if (workingNode->nextNode == NULL && workingNode->data < nodeToInsert->data) {
+            workingNode->nextNode = nodeToInsert;
+            nodeToInsert->previousNode = workingNode;
+        } else {
+            nodeToInsert->nextNode = workingNode;
+            workingNode->previousNode->nextNode = nodeToInsert;
+            workingNode->previousNode = nodeToInsert;
         }
     }
+}
+
+void sortnodes() {
+    // New method
+    // Trying to remove each lowest valued node and start
+    // a new linked list with ascending values
+
+    node* sortedHead = NULL;
+
+    node* workingNode = head;
+    node* nextWorkingNode;
+
+    while (workingNode != NULL) {
+        nextWorkingNode = workingNode->nextNode;
+        // Separates the current working node to then add to the
+        // sorted list and have linkages made
+        workingNode->nextNode = workingNode->previousNode = NULL;
+
+        insertsort(workingNode, &sortedHead);
+
+        workingNode = nextWorkingNode;
+    }
+
+    // Change the head reference to the head of the new list
+    head = sortedHead;
+
+    // This will work through the linked list to reset the tail
+    workingNode = head;
+
+    while (workingNode != NULL) {
+        if (workingNode->nextNode == NULL) {
+            tail = workingNode;
+        }
+        workingNode = workingNode->nextNode;
+    }
+
 }// End sortnodes

@@ -56,6 +56,9 @@ int main()
                 printf("\nThe value of the selected node is (%d).\n", examinenode(getUserChoice(6, nodeCount)));
                 break;
             case 7:
+                getUserChoice(7, nodeCount);
+                break;
+            case 8:
                 notQuit = 0;
                 break;
             default:

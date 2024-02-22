@@ -21,7 +21,8 @@ int getUserChoice(int option, int nodeCount)
             printf("4. Change node value\n");
             printf("5. Sort nodes\n");
             printf("6. Examine node\n");
-            printf("7. Quit\n");
+            printf("7. Insert node\n");
+            printf("8. Quit\n");
             printf("---------------\n");
             printf("Make a selection: ");
             // Apparently when you put the "&" symbol in
@@ -64,7 +65,7 @@ int getUserChoice(int option, int nodeCount)
                     scanf("%d" , &userInput);
                     notChosen = 0;
                 }
-                if (userInput < nodeCount - 1) {
+                if (userInput <= nodeCount - 1) {
                     notChosen = 1;
                     printf("\nEnter the new value for the node: ");
                     while (notChosen) {
@@ -99,6 +100,32 @@ int getUserChoice(int option, int nodeCount)
                 notChosen = 0;
             }
             return userInput;
+        case 7:
+            printf("\nEnter the index after which the node will be inserted: ");
+            while (notChosen) {
+                scanf("%d", &userInput);
+                notChosen = 0;
+            }
+            if (userInput < nodeCount - 1) {
+                notChosen = 1;
+                printf("\nEnter the value for the node: ");
+                while (notChosen) {
+                    scanf("%d", &newValue);
+                    notChosen = 0;
+                }
+                if (insertnodeatindex(newValue, userInput)) {
+                    printf("\nNode with value (%d) added at index (%d).", newValue, userInput);
+                } else {
+                    printf("\nFailed to insert node.");
+                }
+                break;
+            } else if (userInput == nodeCount - 1) {
+                printf("\nChosen index is at the end of the list.  User add node instead.\n");
+                break;
+            } else {
+                printf("\nChosen index is out of bounds.  Please try again.\n");
+                break;
+            }
         default:
             printf("\nWhatcha doin here?");
             break;
