@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include "interface.h"
 
 // This will make it easier later on to traverse the
@@ -11,6 +10,10 @@ static int nodeCount = 0;
 // variable type.  I think struct lets you put a bunch
 // of things together.
 
+
+// Also, i think typedef lets you set the struct as
+// like a thing so you can call it without using struct.
+// That could be completely wrong though so...
 typedef struct node
 {
     int data;
@@ -25,7 +28,6 @@ node* temp = NULL;
 int get_nodecount() {
     return nodeCount;
 }
-
 // This will be to add nodes to the list
 // at the end of the doubly linked list.
 void addnode(int d)
